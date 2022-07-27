@@ -13,7 +13,11 @@
 /* Right now a file path extracted from a file descriptor can
  * have at most `MAX_PATH_POINTERS` components.
  */
+#ifndef __s390x__
+#define MAX_PATH_POINTERS 16
+#else
 #define MAX_PATH_POINTERS 8
+#endif
 
 /* Concept of auxamp (auxiliary map):
  *
@@ -318,8 +322,15 @@ static __always_inline void auxmap__store_path_from_fd(struct auxiliary_map *aux
 	struct vfsmount *original_mount = BPF_CORE_READ(f, f_path.mnt);
 	struct mount *mnt = container_of(original_mount, struct mount, mnt);
 	struct dentry *mount_dentry = BPF_CORE_READ(mnt, mnt.mnt_root);
+#ifndef __s390x__
 	struct dentry *file_dentry_parent = NULL;
-	struct mount *parent_mount = NULL;
+
+	/* this should catch the path from the right mount point. */
+	if(file_dentry == mount_dentry && file_dentry != root_dentry)
+	{
+		BPF_CORE_READ_INTO(&file_dentry, mnt, mnt_mountpoint);
+	}
+#endif
 
 	/* Here we store all the pointers, note that we don't take the pointer
 	 * to the root so we will add it manually if it is necessary!
@@ -330,7 +341,7 @@ static __always_inline void auxmap__store_path_from_fd(struct auxiliary_map *aux
 		{
 			break;
 		}
-
+#ifdef __s390x__
 		if(file_dentry == mount_dentry)
 		{
 			BPF_CORE_READ_INTO(&parent_mount, mnt, mnt_parent);
@@ -339,7 +350,7 @@ static __always_inline void auxmap__store_path_from_fd(struct auxiliary_map *aux
 			BPF_CORE_READ_INTO(&mount_dentry, mnt, mnt.mnt_root);
 			continue;
 		}
-
+#endif
 		path_components++;
 		BPF_CORE_READ_INTO(&path_pointers[k], file_dentry, d_name.name);
 		BPF_CORE_READ_INTO(&file_dentry_parent, file_dentry, d_parent);
