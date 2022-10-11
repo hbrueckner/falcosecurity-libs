@@ -3596,7 +3596,7 @@ FILLER(sys_fsconfig_x, true)
 
 	/* Parameter 4: key (type: PT_CHARBUF) */
 	unsigned long key_pointer = bpf_syscall_get_argument(data, 2);
-	res = bpf_val_to_ring(data, key_pointer);
+	res = bpf_val_to_ring_mem(data, key_pointer, USER);
 	CHECK_RES(res);
 
 	int aux = bpf_syscall_get_argument(data, 4);
@@ -3624,11 +3624,11 @@ FILLER(sys_fsconfig_x, true)
 		/* Since `value` is NULL we send two empty params. */
 
 		/* Parameter 5: value_bytebuf (type: PT_BYTEBUF) */
-		res = bpf_val_to_ring(data, 0);
+		res = bpf_val_to_ring_mem(data, 0, KERNEL);
 		CHECK_RES(res);
 
 		/* Parameter 6: value_charbuf (type: PT_CHARBUF) */
-		res = bpf_val_to_ring(data, 0);
+		res = bpf_val_to_ring_mem(data, 0, KERNEL);
 		CHECK_RES(res);
 		break;
 
@@ -3640,11 +3640,11 @@ FILLER(sys_fsconfig_x, true)
 		 */
 
 		/* Parameter 5: value_bytebuf (type: PT_BYTEBUF) */
-		res = bpf_val_to_ring(data, 0);
+		res = bpf_val_to_ring_mem(data, 0, KERNEL);
 		CHECK_RES(res);
 
 		/* Parameter 6: value_charbuf (type: PT_CHARBUF) */
-		res = bpf_val_to_ring(data, value_pointer);
+		res = bpf_val_to_ring_mem(data, value_pointer, USER);
 		CHECK_RES(res);
 		break;
 
@@ -3654,22 +3654,22 @@ FILLER(sys_fsconfig_x, true)
 		 */
 
 		/* Parameter 5: value_bytebuf (type: PT_BYTEBUF) */
-		res = __bpf_val_to_ring(data, value_pointer, aux, PT_BYTEBUF, -1, true);
+		res = __bpf_val_to_ring(data, value_pointer, aux, PT_BYTEBUF, -1, true, USER);
 		CHECK_RES(res);
 
 		/* Parameter 6: value_charbuf (type: PT_CHARBUF) */
-		res = bpf_val_to_ring(data, 0);
+		res = bpf_val_to_ring_mem(data, 0, KERNEL);
 		CHECK_RES(res);
 
 		break;
 
 	default:
 		/* Parameter 5: value_bytebuf (type: PT_BYTEBUF) */
-		res = bpf_val_to_ring(data, 0);
+		res = bpf_val_to_ring_mem(data, 0, KERNEL);
 		CHECK_RES(res);
 
 		/* Parameter 6: value_charbuf (type: PT_CHARBUF) */
-		res = bpf_val_to_ring(data, 0);
+		res = bpf_val_to_ring_mem(data, 0, KERNEL);
 		CHECK_RES(res);
 		break;
 	}
