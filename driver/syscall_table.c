@@ -690,7 +690,7 @@ const struct syscall_evt_pair g_syscall_table[SYSCALL_TABLE_SIZE] = {
 	[__NR_fadvise64 - SYSCALL_TABLE_ID0] = {.ppm_sc = PPM_SC_FADVISE64},
 #endif
 #ifdef __NR_socketcall
-	[__NR_socketcall - SYSCALL_TABLE_ID0] = {.ppm_sc = PPM_SC_SOCKETCALL },
+	[__NR_socketcall - SYSCALL_TABLE_ID0] = {UF_USED, PPME_SYSCALL_SOCKETCALL_E, PPME_SYSCALL_SOCKETCALL_X, PPM_SC_SOCKETCALL},
 #endif
 #ifdef __NR_fspick
 	[__NR_fspick - SYSCALL_TABLE_ID0] = {.ppm_sc = PPM_SC_FSPICK},
