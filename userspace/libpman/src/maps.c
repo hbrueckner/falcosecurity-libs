@@ -20,6 +20,7 @@ limitations under the License.
 #include <stdint.h>
 #include "events_prog_names.h"
 #include <scap.h>
+#include <syscall.h>
 
 extern const struct ppm_event_info g_event_info[PPM_EVENT_MAX];
 extern const struct syscall_evt_pair g_syscall_table[SYSCALL_TABLE_SIZE];
@@ -80,9 +81,106 @@ void pman_clean_all_64bit_interesting_syscalls()
 	}
 }
 
+static bool is_socketcall_multiplexed(int syscall)
+{
+        switch (syscall) {
+#ifdef __NR_socket
+	case __NR_socket:
+		return true;
+#endif
+#ifdef __NR_bind
+	case __NR_bind:
+		return true;
+#endif
+#ifdef __NR_connect
+	case __NR_connect:
+		return true;
+#endif
+#ifdef __NR_listen
+	case __NR_listen:
+		return true;
+#endif
+#ifdef __NR_accept
+	case __NR_accept:
+		return true;
+#endif
+#ifdef __NR_getsockname
+	case __NR_getsockname:
+		return true;
+#endif
+#ifdef __NR_getpeername
+	case __NR_getpeername:
+		return true;
+#endif
+#ifdef __NR_socketpair
+	case __NR_socketpair:
+		return true;
+#endif
+#ifdef __NR_send
+	case __NR_send:
+		return true;
+#endif
+#ifdef __NR_recv
+	case __NR_recv:
+		return true;
+#endif
+#ifdef __NR_sendto
+	case __NR_sendto:
+		return true;
+#endif
+#ifdef __NR_recvfrom
+	case __NR_recvfrom:
+		return true;
+#endif
+#ifdef __NR_shutdown
+	case __NR_shutdown:
+		return true;
+#endif
+#ifdef __NR_setsockopt
+	case __NR_setsockopt:
+		return true;
+#endif
+#ifdef __NR_getsockopt
+	case __NR_getsockopt:
+		return true;
+#endif
+#ifdef __NR_sendmsg
+	case __NR_sendmsg:
+		return true;
+#endif
+#ifdef __NR_recvmsg
+	case __NR_recvmsg:
+		return true;
+#endif
+#ifdef __NR_accept4
+	case __NR_accept4:
+		return true;
+#endif
+#ifdef __NR_recvmmsg
+	case __NR_recvmmsg:
+		return true;
+#endif
+#ifdef __NR_sendmmsg
+	case __NR_sendmmsg:
+		return true;
+#endif
+	};
+
+	return false;
+}
+
 void pman_mark_single_64bit_syscall(int intersting_syscall_id, bool interesting)
 {
 	g_state.skel->bss->g_64bit_interesting_syscalls_table[intersting_syscall_id] = interesting;
+#ifdef __NR_socketcall
+	/* For now, socketcall will be enabled if any of the socket calls is of interest.
+	 * This might automatically enable socket calls that are not of interest. To filter
+	 * further, a bpf map with interesting information might be required.
+	 */
+	if (is_socketcall_multiplexed(intersting_syscall_id))
+		g_state.skel->bss->g_64bit_interesting_syscalls_table[__NR_socketcall] |= interesting;
+#endif
+
 }
 
 /*=============================== BPF GLOBAL VARIABLES ===============================*/
