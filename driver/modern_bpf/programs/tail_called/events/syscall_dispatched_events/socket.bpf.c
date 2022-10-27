@@ -49,22 +49,24 @@ int BPF_PROG(socket_e,
 
 	/* Parameter 1: domain (type: PT_ENUMFLAGS32) */
 	/* why to send 32 bits if we need only 8 bits? */
-	u8 domain = (u8)extract__syscall_argument(regs, 0);
+	u8 domain = (u8)extract__net_argument(regs, 0);
 	ringbuf__store_u32(&ringbuf, (u32)socket_family_to_scap(domain));
 
 	/* Parameter 2: type (type: PT_UINT32) */
 	/* this should be an int, not a uint32 */
-	u32 type = (u32)extract__syscall_argument(regs, 1);
+	u32 type = (u32)extract__net_argument(regs, 1);
 	ringbuf__store_u32(&ringbuf, type);
 
 	/* Parameter 3: proto (type: PT_UINT32) */
 	/* this should be an int, not a uint32 */
-	u32 proto = (u32)extract__syscall_argument(regs, 2);
+	u32 proto = (u32)extract__net_argument(regs, 2);
 	ringbuf__store_u32(&ringbuf, proto);
 
 	/*=============================== COLLECT PARAMETERS  ===========================*/
 
 	ringbuf__submit_event(&ringbuf);
+
+	/* XXX: delete sc_args */
 
 	return 0;
 }
@@ -94,6 +96,8 @@ int BPF_PROG(socket_x,
 	/*=============================== COLLECT PARAMETERS  ===========================*/
 
 	ringbuf__submit_event(&ringbuf);
+
+	/* XXX: delete sc_args */
 
 	return 0;
 }
