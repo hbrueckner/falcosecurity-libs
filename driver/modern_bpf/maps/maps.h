@@ -170,3 +170,15 @@ struct
 } ringbuf_maps __weak SEC(".maps");
 
 /*=============================== RINGBUF MAP ===============================*/
+
+/*=============================== BPF_MAP_TYPE_HASH ===============================*/
+
+struct
+{
+	__uint(type, BPF_MAP_TYPE_HASH);
+	__uint(key_size, sizeof(u64));
+	__uint(value_size, 6 * sizeof(u64));
+	__uint(max_entries, 65536);
+} socketcall_args_map __weak SEC(".maps");
+
+/*=============================== BPF_MAP_TYPE_HASH ===============================*/

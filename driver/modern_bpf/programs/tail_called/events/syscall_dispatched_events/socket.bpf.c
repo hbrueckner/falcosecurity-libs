@@ -6,8 +6,31 @@
  */
 
 #include <helpers/interfaces/fixed_size_event.h>
+#include <helpers/interfaces/syscalls_dispatcher.h>
+#include <syscall.h>
 
 /*=============================== ENTER EVENT ===========================*/
+
+static __always_inline unsigned long *unstash_sc_args()
+{
+	unsigned long long id = bpf_get_current_pid_tgid() & 0xffffffff;
+
+	return bpf_map_lookup_elem(&socketcall_args_map, &id);
+}
+
+static __always_inline unsigned long extract__net_argument(struct pt_regs *regs, int idx)
+{
+	int syscall_id = syscalls_dispatcher__get_syscall_id(regs);
+
+	if (syscall_id == __NR_socketcall) {
+               unsigned long *args = unstash_sc_args();
+               if (!args || idx > 5)
+                       return 0;
+               return args[idx];
+	}
+
+	return extract__syscall_argument(regs, idx);
+}
 
 SEC("tp_btf/sys_enter")
 int BPF_PROG(socket_e,
