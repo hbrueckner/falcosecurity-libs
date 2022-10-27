@@ -129,6 +129,8 @@
 #define EPOLL_CREATE1_E_SIZE HEADER_LEN + sizeof(uint32_t) + PARAM_LEN
 #define EPOLL_CREATE1_X_SIZE HEADER_LEN + sizeof(int64_t) + PARAM_LEN
 #define ACCESS_E_SIZE HEADER_LEN + sizeof(uint32_t) + PARAM_LEN
+#define SOCKETCALL_E_SIZE HEADER_LEN
+#define SOCKETCALL_X_SIZE HEADER_LEN + sizeof(int64_t) + sizeof(int32_t) + PARAM_LEN * 2
 
 /* Generic tracepoints events. */
 #define PROC_EXIT_SIZE HEADER_LEN + sizeof(int64_t) * 2 + sizeof(uint8_t) * 2 + PARAM_LEN * 4
