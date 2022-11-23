@@ -263,8 +263,8 @@ jobs:
 
   build-and-test-modern-bpf-s390x:
     name: build-and-test-modern-bpf-x86 😇 (bundled_deps)
-    runs-on: [self-hosted, linux, s390x]
-    needs: paths-filter
+    runs-on: s390x-runner-01
+    #needs: paths-filter
     steps:
 
       - name: Checkout Libs ⤵️
