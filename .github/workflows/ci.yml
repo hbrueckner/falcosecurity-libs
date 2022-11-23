@@ -261,6 +261,44 @@ jobs:
             make scap-open
             make bpf_test
 
+  build-and-test-modern-bpf-s390x:
+    name: build-and-test-modern-bpf-x86 😇 (bundled_deps)
+    runs-on: [self-hosted, linux, s390x]
+    needs: paths-filter
+    if: needs.paths-filter.outputs.driver_changed == 'true' || needs.paths-filter.outputs.libscap_changed == 'true'
+    steps:
+
+      - name: Checkout Libs ⤵️
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install deps ⛓️
+        run: |
+          sudo dnf update -y
+          sudo dnf install -y bpftool c-ares-devel clang cmake curl-devel git grpc-devel grpc-plugins gtest-devel jq-devel jsoncpp-devel libb64-devel libbpf-devel libcap-devel openssl-devel protobuf-devel tbb-devel wget
+
+      - name: Build scap-open 🏗️
+        run: |
+          mkdir -p build
+          cd build && cmake -DUSE_BUNDLED_DEPS=ON -DBUILD_LIBSCAP_MODERN_BPF=ON -DBUILD_MODERN_BPF_TEST=ON -DMODERN_BPF_DEBUG_MODE=ON -DBUILD_LIBSCAP_GVISOR=OFF ../
+          make scap-open
+
+      - name: Run scap-open 🏎️
+        run: |
+          cd build
+          sudo ./libscap/examples/01-open/scap-open --modern_bpf --num_events 0
+
+      - name: Build bpf_test 🏗️
+        run: |
+          cd build
+          make bpf_test
+
+      - name: Running tests 🧪
+        run: |
+          cd build
+          sudo ./test/modern_bpf/bpf_test --verbose
+
   build-libs-driverkit:
     name: build-libs-driverkit
     runs-on: ubuntu-latest
