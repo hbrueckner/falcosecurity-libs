@@ -265,7 +265,6 @@ jobs:
     name: build-and-test-modern-bpf-x86 😇 (bundled_deps)
     runs-on: [self-hosted, linux, s390x]
     needs: paths-filter
-    if: needs.paths-filter.outputs.driver_changed == 'true' || needs.paths-filter.outputs.libscap_changed == 'true'
     steps:
 
       - name: Checkout Libs ⤵️
