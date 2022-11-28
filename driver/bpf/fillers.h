@@ -3003,7 +3003,7 @@ FILLER(sys_unshare_e, true)
 	int res;
 
 	val = bpf_syscall_get_argument(data, 0);
-	flags = clone_flags_to_scap(val);
+	flags = clone_flags_to_scap(val & 0xffff);
 	res = bpf_val_to_ring(data, flags);
 
 	return res;
