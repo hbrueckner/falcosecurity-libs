@@ -771,7 +771,7 @@ static __always_inline void call_filler(void *ctx,
 #ifdef CAPTURE_SOCKETCALL
 	/* Handle and extract network event based on socketcall multiplexer */
 	if (evt_type == PPME_GENERIC_E || evt_type == PPME_GENERIC_X)
-		if (handle_socketcall(ctx, state, &evt_type, &drop_flags))
+		if (handle_socketcall(stack_ctx, state, &evt_type, &drop_flags))
 			goto cleanup;
 #endif
 
