@@ -110,6 +110,7 @@ struct
 } extra_event_prog_tail_table __weak SEC(".maps");
 
 
+#ifdef CAPTURE_SOCKETCALL
 struct
 {
 	__uint(type, BPF_MAP_TYPE_PROG_ARRAY);
@@ -125,6 +126,7 @@ struct
 	__type(key, u32);
 	__type(value, u32);
 } socketcall_exit_table __weak SEC(".maps");
+#endif
 
 /*=============================== BPF_MAP_TYPE_PROG_ARRAY ===============================*/
 

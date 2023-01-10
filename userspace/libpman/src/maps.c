@@ -210,6 +210,7 @@ clean_fill_syscalls_tail_table:
 	return errno;
 }
 
+#ifdef CAPTURE_SOCKETCALL
 int pman_fill_socketcall_tail_tables()
 {
 	/* We use the evt_pair just to have enter and exit events in one shot */
@@ -288,6 +289,7 @@ clean_fill_socketcall_tail_table:
 	close(socketcall_exit_table_fd);
 	return errno;	
 }
+#endif
 
 int pman_fill_extra_event_prog_tail_table()
 {
@@ -374,6 +376,8 @@ int pman_finalize_maps_after_loading()
 	/* We have to fill all ours tail tables. */
 	err = pman_fill_syscalls_tail_table();
 	err = err ?: pman_fill_extra_event_prog_tail_table();
+#ifdef CAPTURE_SOCKETCALL
 	err = err ?: pman_fill_socketcall_tail_tables();
+#endif
 	return err;
 }
