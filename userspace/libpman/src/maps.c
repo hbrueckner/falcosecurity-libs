@@ -373,7 +373,7 @@ int pman_finalize_maps_after_loading()
 
 	/* We have to fill all ours tail tables. */
 	err = pman_fill_syscalls_tail_table();
-	err = pman_fill_socketcall_tail_tables();
 	err = err ?: pman_fill_extra_event_prog_tail_table();
+	err = err ?: pman_fill_socketcall_tail_tables();
 	return err;
 }
