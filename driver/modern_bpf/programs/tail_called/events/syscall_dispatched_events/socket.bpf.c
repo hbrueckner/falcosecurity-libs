@@ -26,21 +26,7 @@ int BPF_PROG(socket_e,
 
 	/* Collect parameters at the beginning so we can easily manage socketcalls */
 	unsigned long args[3];
-#ifdef CAPTURE_SOCKETCALL
-	if(id == __NR_socketcall)
-	{
-		unsigned long args_pointer = extract__syscall_argument(regs, 0);
-		bpf_probe_read_user(&args, 3*sizeof(unsigned long), (void*)args_pointer);
-	} 
-	else
-	{
-#endif
-		args[0] = extract__syscall_argument(regs, 0);
-		args[1] = extract__syscall_argument(regs, 1);
-		args[2] = extract__syscall_argument(regs, 2);
-#ifdef CAPTURE_SOCKETCALL
-	}
-#endif	
+	extract__network_args(args, 3, regs);
 
 	/* Parameter 1: domain (type: PT_ENUMFLAGS32) */
 	/* why to send 32 bits if we need only 8 bits? */
