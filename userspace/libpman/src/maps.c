@@ -236,8 +236,6 @@ int pman_fill_socketcall_tail_tables()
 		[SYS_SENDMMSG] = {0, PPME_SOCKET_SENDMMSG_E, PPME_SOCKET_SENDMMSG_X, 0},
 	};
 
-	int	enter_event_type = 0;
-	int	exit_event_type = 0;
 	const char* enter_prog_name = NULL;
 	const char* exit_prog_name = NULL;
 	int socketcall_enter_table_fd = 0;
@@ -283,6 +281,7 @@ int pman_fill_socketcall_tail_tables()
 			goto clean_fill_socketcall_tail_table;
 		}
 	}
+	return 0;
 
 clean_fill_socketcall_tail_table:
 	close(socketcall_enter_table_fd);
