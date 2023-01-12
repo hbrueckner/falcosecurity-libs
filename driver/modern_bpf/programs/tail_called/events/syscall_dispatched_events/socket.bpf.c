@@ -25,8 +25,8 @@ int BPF_PROG(socket_e,
 	/*=============================== COLLECT PARAMETERS  ===========================*/
 
 	/* Collect parameters at the beginning so we can easily manage socketcalls */
-	unsigned long args[SC_SOCKET_ARG_NUM];
-	extract__network_args(args, SC_SOCKET_ARG_NUM, regs);
+	unsigned long args[SC_ARG_NUM_SOCKET];
+	extract__network_args(args, SC_ARG_NUM_SOCKET, regs);
 
 	/* Parameter 1: domain (type: PT_ENUMFLAGS32) */
 	/* why to send 32 bits if we need only 8 bits? */
