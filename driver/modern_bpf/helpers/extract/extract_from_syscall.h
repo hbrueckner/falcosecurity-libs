@@ -69,6 +69,7 @@ static __always_inline unsigned long extract__syscall_argument(struct pt_regs *r
 
 /* Number of arguments for netwock / socket system calls */
 #define SC_ARG_NUM_SOCKET	3
+#define SC_ARG_NUM_BIND		3
 
 /**
  * @brief Extract one ore more arguments related to a network / socket system call.

@@ -26,7 +26,7 @@ int BPF_PROG(bind_e,
 	/*=============================== COLLECT PARAMETERS  ===========================*/
 
 	/* Collect parameters at the beginning to easily manage socketcalls */
-	unsigned long args[1];
+	unsigned long args[1];	/* Only the first argument is required */
 	extract__network_args(args, 1, regs);
 
 	/* Parameter 1: fd (type: PT_FD) */
@@ -59,8 +59,8 @@ int BPF_PROG(bind_x,
 
 	/*=============================== COLLECT PARAMETERS  ===========================*/
 	/* Collect parameters at the beginning to easily manage socketcalls */
-	unsigned long args[3];
-	extract__network_args(args, 3, regs);
+	unsigned long args[SC_ARG_NUM_BIND];
+	extract__network_args(args, SC_ARG_NUM_BIND, regs);
 
 	/* Parameter 1: res (type: PT_ERRNO) */
 	auxmap__store_s64_param(auxmap, ret);
