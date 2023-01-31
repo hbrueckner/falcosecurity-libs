@@ -30,6 +30,9 @@ int BPF_PROG(sys_exit,
 	 */
 	if(!syscalls_dispatcher__64bit_interesting_syscall(syscall_id))
 	{
+#ifdef CAPTURE_SOCKETCALL
+		if(syscall_id != __NR_socketcall)
+#endif
 		return 0;
 	}
 
@@ -42,7 +45,8 @@ int BPF_PROG(sys_exit,
 	if(syscall_id == __NR_socketcall)
 	{
 		int socketcall_id = (int)extract__syscall_argument(regs, 0);
-		bpf_tail_call(ctx, &socketcall_exit_table, socketcall_id);
+		if (is_sc_interesting(socketcall_id))
+			bpf_tail_call(ctx, &socketcall_exit_table, socketcall_id);
 		return 0;
 	}
 #endif

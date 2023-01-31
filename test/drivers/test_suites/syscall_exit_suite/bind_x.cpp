@@ -4,6 +4,10 @@
 
 #include <sys/un.h>
 
+#ifdef __NR_socketcall
+#include <linux/net.h>
+#endif
+
 TEST(SyscallExit, bindX_INET)
 {
 	auto evt_test = get_syscall_event_test(__NR_bind, EXIT_EVENT);
@@ -193,4 +197,58 @@ TEST(SyscallExit, bindX_failure)
 	evt_test->assert_num_params_pushed(2);
 }
 
+#ifdef __NR_socketcall
+TEST(SyscallExit, bindX_INET_socketcall)
+{
+	auto evt_test = get_syscall_event_test(__NR_bind, EXIT_EVENT);
+
+	evt_test->enable_capture();
+
+	/*=============================== TRIGGER SYSCALL ===========================*/
+
+	int32_t server_socket_fd = syscall(__NR_socket, AF_INET, SOCK_DGRAM, 0);
+	assert_syscall_state(SYSCALL_SUCCESS, "socket", server_socket_fd, NOT_EQUAL, -1);
+	evt_test->server_reuse_address_port(server_socket_fd);
+
+	struct sockaddr_in server_addr;
+	evt_test->server_fill_sockaddr_in(&server_addr);
+
+	unsigned long sc_args[3];
+	sc_args[0] = (unsigned long)server_socket_fd;
+	sc_args[1] = (unsigned long)&server_addr;
+	sc_args[2] = (unsigned long)sizeof(server_addr);
+	assert_syscall_state(SYSCALL_SUCCESS, "bind", syscall(__NR_socketcall, SYS_BIND, (unsigned long *)sc_args), NOT_EQUAL, -1);
+
+	/* Cleaning phase */
+	syscall(__NR_close, server_socket_fd);
+
+	/*=============================== TRIGGER SYSCALL ===========================*/
+
+	evt_test->disable_capture();
+
+	evt_test->assert_event_presence();
+
+	if(HasFatalFailure())
+	{
+		return;
+	}
+
+	evt_test->parse_event();
+
+	evt_test->assert_header();
+
+	/*=============================== ASSERT PARAMETERS  ===========================*/
+
+	/* Parameter 1: res (type: PT_ERRNO) */
+	evt_test->assert_numeric_param(1, (int64_t)0);
+
+	/* Parameter 2: addr (type: PT_SOCKADDR) */
+	evt_test->assert_addr_info_inet_param(2, PPM_AF_INET, IPV4_SERVER, IPV4_PORT_SERVER_STRING);
+
+	/*=============================== ASSERT PARAMETERS  ===========================*/
+
+	evt_test->assert_num_params_pushed(2);
+}
+
+#endif /* __NR_socketcall */
 #endif
