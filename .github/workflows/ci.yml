@@ -161,7 +161,6 @@ jobs:
     name: test-drivers-s390x 😇 (system_deps)
     runs-on: [self-hosted]
     needs: paths-filter
-    if: needs.paths-filter.outputs.driver_changed == 'true' || needs.paths-filter.outputs.libscap_changed == 'true'
     steps:
 
       - name: Checkout Libs ⤵️
