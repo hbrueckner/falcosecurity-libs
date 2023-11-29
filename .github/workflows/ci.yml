@@ -160,7 +160,6 @@ jobs:
   test-drivers-s390x:
     name: test-drivers-s390x 😇 (system_deps)
     runs-on: [self-hosted]
-    needs: paths-filter
     steps:
 
       - name: Checkout Libs ⤵️
