@@ -170,7 +170,7 @@ jobs:
       - name: Build drivers tests 🏗️
         run: |
           mkdir -p build
-          cd build && cmake -DUSE_BUNDLED_DEPS=OFF -DENABLE_DRIVERS_TESTS=ON -DBUILD_LIBSCAP_MODERN_BPF=ON -DMODERN_BPF_DEBUG_MODE=ON -DBUILD_BPF=ON -DBUILD_LIBSCAP_GVISOR=OFF ../
+          cd build && cmake -DUSE_BUNDLED_DEPS=OFF -DENABLE_DRIVERS_TESTS=ON -DBUILD_LIBSCAP_MODERN_BPF=ON -DMODERN_BPF_DEBUG_MODE=ON -DBUILD_BPF=ON -DBUILD_LIBSCAP_GVISOR=OFF -DMODERN_PROBE_INCLUDE="-I/usr/include/s390x-linux-gnu" ../
           make drivers_test
           make driver bpf
 
