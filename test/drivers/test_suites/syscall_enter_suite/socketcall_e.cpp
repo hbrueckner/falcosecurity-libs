@@ -370,9 +370,9 @@ TEST(SyscallEnter, socketcall_acceptE)
 	evt_test->assert_header();
 
 #ifdef __s390x__
-	if(!evt_test->is_kmod_engine())
+	if(evt_test->is_modern_bpf_engine())
 	{
-		/* socketcall uses accept4 event for SYS_ACCEPT */
+		/* socketcall uses accept4 event for SYS_ACCEPT for modern BPF */
 
 		/*=============================== ASSERT PARAMETERS  ===========================*/
 
